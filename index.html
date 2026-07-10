@@ -1,32 +1,79 @@
-name: Fetch Bing WallpapersDaily
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Архив Bing Обоев</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; }
+        h1 { text-align: center; }
+        .filters { text-align: center; margin-bottom: 20px; }
+        button { background: #333; color: white; border: none; padding: 10px 15px; margin: 5px; cursor: pointer; border-radius: 5px; }
+        button:hover, button.active { background: #0078d4; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: #1e1e1e; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-content { padding: 15px; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .card-date { font-size: 12px; color: #888; margin-bottom: 10px; }
+        .download-btn { display: inline-block; background: #0078d4; color: white; text-decoration: none; padding: 8px 12px; border-radius: 4px; font-size: 14px; }
+    </style>
+</head>
+<body>
 
-on:
-  schedule:
-    - cron: '0 0 * * *' # Запуск каждый день в 00:00 UTC
-  workflow_dispatch: # Позволит запускать вручную кнопкой
+    <h1>Архив обоев Bing по странам</h1>
+    
+    <div class="filters">
+        <button onclick="filterMarket('ALL')" class="active">Все страны</button>
+        <button onclick="filterMarket('en-US')">США</button>
+        <button onclick="filterMarket('zh-CN')">Китай</button>
+        <button onclick="filterMarket('ja-JP')">Япония</button>
+        <button onclick="filterMarket('de-DE')">Германия</button>
+        <button onclick="filterMarket('fr-FR')">Франция</button>
+    </div>
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    <div class="grid" id="gallery"></div>
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
+    <script>
+        let allData = {};
 
-    - name: Install dependencies
-      run: pip install requests
+        fetch('data.json')
+            .then(res => res.json())
+            .then(data => {
+                allData = data;
+                renderGallery('ALL');
+            });
 
-    - name: Run script
-      run: python fetch_bing.py
+        function renderGallery(market) {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            
+            const sortedKeys = Object.keys(allData).sort().reverse();
 
-    - name: Commit and push changes
-      run: |
-        git config --global user.name "BingBot"
-        git config --global user.email "bot@github.com"
-        git add data.json
-        git commit -m "Update wallpapers data" || exit 0
-        git push
+            sortedKeys.forEach(key => {
+                const item = allData[key];
+                if (market !== 'ALL' && item.market !== market) return;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${item.url}" alt="${item.title}">
+                    <div class="card-content">
+                        <div class="card-title">${item.title || 'Без названия'}</div>
+                        <div class="card-date">${item.date} (${item.market})</div>
+                        <div style="font-size:12px; color:#aaa; margin-bottom:10px;">${item.copyright}</div>
+                        <a href="${item.url}" target="_blank" class="download-btn">Открыть в 4K</a>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+        }
+
+        function filterMarket(mkt) {
+            document.querySelectorAll('.filters button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGallery(mkt);
+        }
+    </script>
+</body>
+</html>
