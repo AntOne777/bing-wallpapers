@@ -22,7 +22,7 @@
 
         .lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
         .lightbox.active { display: flex; flex-direction: column; }
-        .lightbox-img { max-width: 95%; max-height: 80%; opacity: 0; transition: opacity 0.3s; object-fit: contain; background: transparent; }
+        .lightbox-img { max-width: 95%; max-height: 80%; opacity: 0; transition: opacity 0.3s; object-fit: contain; background: transparent; cursor: context-menu; }
         .lightbox-img.loaded { opacity: 1; }
         
         .close-btn { position: absolute; top: 25px; right: 35px; background: none; border: none; color: white; font-size: 40px; cursor: pointer; z-index: 1001; }
@@ -103,6 +103,7 @@
                     
                     overlay.onclick = (e) => {
                         e.preventDefault();
+                        contextItem = item;
                         lbImg.classList.remove('loaded');
                         lbl.textContent = `${(item.title || "BingImage").replace(/[^a-zA-Z0-9а-яА-Я]/g, '') || "BingImage"}.jpg`;
                         lb.classList.add('active'); 
@@ -112,19 +113,32 @@
                         dlBtn.onclick = () => downloadImage(item);
                     };
 
-                    overlay.oncontextmenu = (e) => {
+                    overlay.addEventListener('contextmenu', (e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         contextItem = item;
-                        contextMenu.style.left = e.pageX + "px";
-                        contextMenu.style.top = e.pageY + "px";
+                        contextMenu.style.left = `${e.clientX}px`;
+                        contextMenu.style.top = `${e.clientY}px`;
                         contextMenu.classList.add('active');
-                    };
+                    });
                     document.getElementById('gallery').append(card);
                 });
             }).catch(() => { document.getElementById('gallery').innerHTML = "<p style='text-align:center'>Ошибка загрузки архива</p>"; });
 
+        lbImg.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (contextItem) {
+                contextMenu.style.left = `${e.clientX}px`;
+                contextMenu.style.top = `${e.clientY}px`;
+                contextMenu.classList.add('active');
+            }
+        });
+
         contextDownload.onclick = () => { if(contextItem) downloadImage(contextItem); contextMenu.classList.remove('active'); };
-        document.onclick = () => { contextMenu.classList.remove('active'); };
+        document.addEventListener('click', () => { contextMenu.classList.remove('active'); });
+        document.addEventListener('contextmenu', (e) => { if(!e.target.closest('.card') && e.target !== lbImg) contextMenu.classList.remove('active'); });
+        
         document.getElementById('close-btn').onclick = close;
         lb.onclick = (e) => { if(e.target === lb) close(); };
         document.onkeydown = (e) => { if(e.key === "Escape") close(); };
