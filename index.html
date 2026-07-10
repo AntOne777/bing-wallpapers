@@ -26,6 +26,7 @@
         .lightbox img { 
             max-width: 95%; max-height: 80%; object-fit: contain; 
             user-select: none; -webkit-user-drag: none; -webkit-touch-callout: none; pointer-events: auto; 
+            transition: opacity 0.3s ease;
         }
         .close { position: absolute; right: 35px; top: 25px; font-size: 40px; background: none; border: 0; color: white; cursor: pointer; }
         .controls { margin-top: 20px; }
@@ -55,7 +56,6 @@
         let current = null;
         let blobURL = null;
 
-        // Блокировка ПКМ на оригинале
         document.addEventListener("contextmenu", e => {
             if (e.target === bigImage) e.preventDefault();
         });
@@ -81,6 +81,12 @@
                 alert("Ошибка загрузки");
             } finally {
                 downloadBtn.textContent = "Скачать UHD";
+                setTimeout(() => {
+                    if (blobURL) {
+                        URL.revokeObjectURL(blobURL);
+                        blobURL = null;
+                    }
+                }, 2000);
             }
         }
 
