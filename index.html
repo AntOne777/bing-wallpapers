@@ -2,17 +2,20 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Личный архив Bing Wallpaper UHD">
+    <meta name="theme-color" content="#121212">
     <title>Горизонт | Bing Archive</title>
+
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 20px; background: #121212; color: white; font-family: -apple-system, sans-serif; }
+        body { margin: 0; padding: 20px; background: #121212; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
         h1 { text-align: center; margin: 60px 0; font-weight: 200; letter-spacing: .5em; text-transform: uppercase; font-size: 32px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .card { position: relative; overflow: hidden; border-radius: 8px; background: #1e1e1e; cursor: pointer; }
         .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: .3s; display: block; }
         .card img.loaded { opacity: 1; }
-        .overlay { position: absolute; inset: 0; }
+        .overlay { position: absolute; inset: 0; z-index: 10; }
         .info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,.9)); opacity: 0; transition: .3s; pointer-events: none; }
         .card:hover .info { opacity: 1; }
         .title { font-size: 13px; text-transform: uppercase; }
@@ -28,6 +31,7 @@
     </style>
 </head>
 <body>
+
     <h1>Горизонт</h1>
     <div class="grid" id="gallery"></div>
 
@@ -43,26 +47,35 @@
         const gallery = document.getElementById("gallery");
         const viewer = document.getElementById("viewer");
         const bigImage = document.getElementById("bigImage");
+        const downloadBtn = document.getElementById("download");
         let current = null;
 
         // Блокировка ПКМ на картинке
         bigImage.addEventListener('contextmenu', (e) => e.preventDefault());
 
         async function download(item) {
-            const btn = document.getElementById("download");
-            const originalText = btn.textContent;
+            if (!item || !item.url) return;
+            
+            const originalText = downloadBtn.textContent;
             try {
-                btn.textContent = "Загрузка...";
+                downloadBtn.textContent = "Загрузка...";
                 const r = await fetch(item.url);
                 const blob = await r.blob();
                 const url = URL.createObjectURL(blob);
+                
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = `${item.id}_${item.date}.jpg`;
+                // Принудительное использование ID или Title, чтобы избежать undefined
+                const safeName = (item.id || "bing_wallpaper") + "_" + (item.date || "unknown");
+                a.download = `${safeName}.jpg`;
+                
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(url), 2000);
-            } catch { alert("Ошибка загрузки"); }
-            finally { btn.textContent = originalText; }
+            } catch { 
+                alert("Ошибка загрузки"); 
+            } finally { 
+                downloadBtn.textContent = originalText; 
+            }
         }
 
         function openViewer(item) {
@@ -74,6 +87,7 @@
         function closeViewer() {
             viewer.classList.remove("active");
             bigImage.src = "";
+            current = null; // Очищаем ссылку
         }
 
         fetch("data.json?" + Date.now())
@@ -83,6 +97,7 @@
                     const card = document.createElement("div"); card.className = "card";
                     const img = document.createElement("img"); img.src = item.preview; img.loading = "lazy";
                     img.onload = () => img.classList.add("loaded");
+                    
                     const overlay = document.createElement("div"); overlay.className = "overlay";
                     const info = document.createElement("div"); info.className = "info";
                     info.innerHTML = `<div class="title">${item.title || ""}</div><div class="date">${item.date || ""} ${(item.markets||[]).join(" • ")}</div>`;
@@ -93,7 +108,7 @@
                 });
             });
 
-        document.getElementById("download").onclick = () => download(current);
+        downloadBtn.onclick = () => download(current);
         document.getElementById("close").onclick = closeViewer;
         viewer.onclick = e => { if(e.target === viewer) closeViewer(); };
         document.onkeydown = e => { if(e.key === "Escape") closeViewer(); };
