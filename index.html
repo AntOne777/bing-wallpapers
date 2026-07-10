@@ -6,28 +6,40 @@
     <title>Горизонт | Архивы Bing</title>
     <style>
         body { font-family: -apple-system, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; }
-        h1 { text-align: center; margin: 60px 0; font-family: 'Segoe UI', Roboto, sans-serif; font-weight: 200; letter-spacing: 0.5em; text-transform: uppercase; color: #ffffff; font-size: 32px; }
+        h1 { text-align: center; margin: 60px 0; font-family: 'Segoe UI', sans-serif; font-weight: 200; letter-spacing: 0.5em; text-transform: uppercase; color: #ffffff; font-size: 32px; }
+        
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .card { position: relative; background: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: zoom-in; }
         .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: opacity 0.3s; background: #222; }
         .card img.loaded { opacity: 1; }
+        
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 40px 15px 15px; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; font-family: 'Segoe UI', sans-serif; }
         .card:hover .card-info { opacity: 1; }
         .card-title { font-size: 13px; font-weight: 300; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; letter-spacing: 0.05em; }
         .card-date { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.2em; }
+
         .lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
         .lightbox.active { display: flex; }
         .lightbox-img { max-width: 95%; max-height: 90%; opacity: 0; transition: opacity 0.3s; }
         .lightbox-img.loaded { opacity: 1; }
+        
+        /* Индикатор имени файла */
+        .lightbox-filename { position: absolute; top: 20px; left: 20px; color: #fff; font-size: 11px; opacity: 0.4; font-family: monospace; pointer-events: none; }
     </style>
 </head>
 <body>
     <h1>Горизонт</h1>
     <div class="grid" id="gallery"></div>
-    <div id="lightbox" class="lightbox"><img class="lightbox-img" id="lightbox-img"></div>
+    
+    <div id="lightbox" class="lightbox">
+        <div id="lightbox-filename" class="lightbox-filename"></div>
+        <img class="lightbox-img" id="lightbox-img">
+    </div>
 
     <script>
-        const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lightbox-img');
+        const lb = document.getElementById('lightbox'), 
+              lbImg = document.getElementById('lightbox-img'),
+              lbName = document.getElementById('lightbox-filename');
         
         fetch('data.json?t=' + Date.now()).then(r => r.json()).then(data => {
             Object.values(data).forEach(item => {
@@ -43,29 +55,19 @@
                 
                 const tit = document.createElement('div'); tit.className = 'card-title'; tit.textContent = item.title;
                 const dat = document.createElement('div'); dat.className = 'card-date'; dat.textContent = formattedDate;
-                info.append(tit, dat); card.append(img, info);
+                info.append(tit, dat); 
+                card.append(img, info);
                 
                 card.onclick = () => {
                     lbImg.classList.remove('loaded'); lbImg.src = ""; lb.classList.add('active');
-                    // Устанавливаем имя через атрибут data, чтобы браузер знал, как именовать файл при сохранении
-                    lbImg.setAttribute('data-name', item.img_id + '.jpg'); 
+                    lbName.textContent = item.img_id + '.jpg'; // Показываем реальное имя
                     setTimeout(() => { lbImg.src = item.url; }, 50);
                 };
                 document.getElementById('gallery').append(card);
             });
         });
-
-        lbImg.onload = () => lbImg.classList.add('loaded');
         
-        // При клике правой кнопкой на картинку в лайтбоксе или сохранении:
-        lbImg.oncontextmenu = (e) => {
-            const link = document.createElement('a');
-            link.href = lbImg.src;
-            link.download = lbImg.getAttribute('data-name');
-            link.click();
-            return false; // Отключаем стандартное меню
-        };
-
+        lbImg.onload = () => lbImg.classList.add('loaded');
         lb.onclick = (e) => { if(e.target === lb) lb.classList.remove('active'); };
         document.onkeydown = (e) => { if(e.key === 'Escape') lb.classList.remove('active'); };
     </script>
