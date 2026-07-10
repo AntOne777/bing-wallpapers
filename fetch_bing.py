@@ -28,12 +28,18 @@ def fetch_wallpapers():
                     date = img.get('startdate')
                     if not date: continue
                     
-                    # Вытаскиваем чистый уникальный ID картинки (например, LemonShark)
                     urlbase = img.get('urlbase', '')
-                    img_id = urlbase.split('?id=OHR.')[-1].split('_')[0] if '?id=OHR.' in urlbase else urlbase.split('/')[-1]
+                    if '?id=OHR.' in urlbase:
+                        raw_id = urlbase.split('?id=OHR.')[-1]
+                    else:
+                        raw_id = urlbase.split('/')[-1]
                     
-                    # Ключ теперь уникален для самой картинки на эту дату (никаких повторов из-за стран!)
-                    key = f"{date}_{img_id}"
+                    # Отрезаем ВСЁ лишнее после названия картинки (коды стран, цифры)
+                    # Из 'VictoriaBeach_EN-US7607379912' получаем чистый 'VictoriaBeach'
+                    clean_id = raw_id.split('_')[0]
+                    
+                    # Жесткий уникальный ключ: Дата + Чистое Название
+                    key = f"{date}_{clean_id}"
                     
                     if key not in db:
                         base_url = "https://www.bing.com" + urlbase + "_UHD.jpg"
@@ -41,18 +47,18 @@ def fetch_wallpapers():
                         db[key] = {
                             "date": f"{date[:4]}-{date[4:6]}-{date[6:]}",
                             "url": base_url,
-                            "img_id": img_id
+                            "img_id": clean_id
                         }
                         updated = True
         except Exception as e:
             print(f"Ошибка {mkt}: {e}")
 
     if updated or not db:
-        # Сортируем базу по дате и ключу в обратном порядке (свежие сверху)
+        # Сортируем базу по дате, чтобы новые обои всегда шли первыми
         db = dict(sorted(db.items(), key=lambda item: item[0], reverse=True))
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(db, f, ensure_ascii=False, indent=4)
-        print("База успешно пересобрана без дубликатов!")
+        print("База очищена от абсолютно всех скрытых дубликатов!")
 
 if __name__ == "__main__":
     fetch_wallpapers()
