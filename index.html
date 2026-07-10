@@ -2,33 +2,32 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Личный архив Bing Wallpaper в UHD">
     <meta name="theme-color" content="#121212">
-    <link rel="preconnect" href="https://www.bing.com">
     <title>Горизонт | Архивы Bing</title>
     <style>
         body { font-family: -apple-system, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; }
         h1 { text-align: center; margin: 60px 0; font-family: 'Segoe UI', sans-serif; font-weight: 200; letter-spacing: 0.5em; text-transform: uppercase; color: #ffffff; font-size: 32px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .card { position: relative; background: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: zoom-in; }
-        .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: opacity 0.3s; background: #222; }
-        .card img.loaded { opacity: 1; }
         
-        .card-info { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 40px 15px 15px; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; font-family: 'Segoe UI', sans-serif; }
+        .card { position: relative; background: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: pointer; }
+        .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: opacity 0.3s; display: block; }
+        .card img.loaded { opacity: 1; }
+        /* Невидимый слой поверх всей карточки */
+        .card-overlay { position: absolute; top:0; left:0; width:100%; height:100%; z-index:10; }
+        
+        .card-info { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 40px 15px 15px; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
         .card:hover .card-info { opacity: 1; }
-        .card-title { font-size: 13px; font-weight: 300; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; letter-spacing: 0.05em; }
-        .card-date, .card-markets { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.2em; }
-        .card-markets { margin-top: 4px; color: #0078d4; }
+        .card-title { font-size: 13px; font-weight: 300; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+        .card-date, .card-markets { font-size: 10px; color: #aaa; text-transform: uppercase; }
 
         .lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
         .lightbox.active { display: flex; flex-direction: column; }
         .lightbox-img { max-width: 95%; max-height: 80%; opacity: 0; transition: opacity 0.3s; }
         .lightbox-img.loaded { opacity: 1; }
         
-        .close-btn { position: absolute; top: 25px; right: 35px; background: none; border: none; color: white; font-size: 40px; cursor: pointer; }
+        .close-btn { position: absolute; top: 25px; right: 35px; background: none; border: none; color: white; font-size: 40px; cursor: pointer; z-index: 1001; }
         .lightbox-controls { margin-top: 20px; display: flex; gap: 20px; align-items: center; }
-        .btn-download { cursor: pointer; background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s; }
-        .btn-download:hover { background: rgba(0, 120, 212, 0.8); }
+        .btn-download { cursor: pointer; background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 12px; text-transform: uppercase; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -45,66 +44,51 @@
     </div>
 
     <script>
-        const lb = document.getElementById('lightbox'), 
-              lbImg = document.getElementById('lightbox-img'),
-              dlBtn = document.getElementById('download-btn'), 
-              lbl = document.getElementById('file-label');
-        
+        const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lightbox-img'),
+              dlBtn = document.getElementById('download-btn'), lbl = document.getElementById('file-label');
         let currentBlobUrl = null;
 
-        const close = () => { 
-            lb.classList.remove('active'); 
-            lbImg.src = ""; lbImg.classList.remove('loaded');
-            if(currentBlobUrl) { URL.revokeObjectURL(currentBlobUrl); currentBlobUrl = null; } 
-        };
+        const close = () => { lb.classList.remove('active'); lbImg.src=""; if(currentBlobUrl){ URL.revokeObjectURL(currentBlobUrl); currentBlobUrl=null; } };
 
         fetch('data.json?t=' + Date.now())
-            .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+            .then(r => r.json())
             .then(data => {
                 Object.values(data).forEach(item => {
-                    const card = document.createElement('div'), img = document.createElement('img'), info = document.createElement('div');
-                    card.className = 'card'; info.className = 'card-info';
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    // Добавляем невидимый слой для перехвата клика
+                    card.innerHTML = `<img src="${item.preview}" loading="lazy" decoding="async">
+                                     <div class="card-overlay"></div>
+                                     <div class="card-info">
+                                         <div class="card-title">${item.title}</div>
+                                         <div class="card-date">${item.date}</div>
+                                     </div>`;
                     
-                    img.src = item.preview; img.alt = item.title; 
-                    img.loading = "lazy"; img.decoding = "async";
+                    const img = card.querySelector('img');
                     img.onload = () => img.classList.add('loaded');
-                    if (img.complete) img.classList.add('loaded');
+                    if(img.complete) img.classList.add('loaded');
                     
-                    const [y="", m="", d=""] = item.date.split('-');
-                    const dateStr = `${d}.${m}.${y}`;
-                    
-                    const tit = document.createElement('div'); tit.className = 'card-title'; tit.textContent = item.title;
-                    const dat = document.createElement('div'); dat.className = 'card-date'; dat.textContent = dateStr;
-                    const mkt = document.createElement('div'); mkt.className = 'card-markets'; mkt.textContent = (item.markets || []).join(' • ');
-                    
-                    info.append(tit, dat, mkt); card.append(img, info);
-                    
-                    card.onclick = () => {
-                        lbImg.classList.remove('loaded'); lbImg.src = item.url;
-                        lbl.textContent = `${item.img_id}_${y}${m}${d}.jpg`;
+                    // Перехват клика именно через слой
+                    card.querySelector('.card-overlay').onclick = (e) => {
+                        e.preventDefault();
+                        lbImg.src = item.url;
+                        lbl.textContent = `${item.img_id}_${item.date.replace(/-/g,'')}.jpg`;
                         lb.classList.add('active');
-                        
-                        dlBtn.textContent = "Скачать UHD";
                         dlBtn.onclick = async () => {
-                            try {
-                                dlBtn.textContent = "Загрузка...";
-                                const r = await fetch(item.url);
-                                if(!r.ok) throw new Error();
-                                const b = await r.blob();
-                                if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                                currentBlobUrl = URL.createObjectURL(b);
-                                const a = document.createElement('a');
-                                a.href = currentBlobUrl; a.download = lbl.textContent; a.click();
-                            } catch(e) { alert("Ошибка при загрузке UHD"); } 
-                            finally { dlBtn.textContent = "Скачать UHD"; }
+                            dlBtn.textContent = "Загрузка...";
+                            const r = await fetch(item.url);
+                            const b = await r.blob();
+                            if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                            currentBlobUrl = URL.createObjectURL(b);
+                            const a = document.createElement('a');
+                            a.href = currentBlobUrl; a.download = lbl.textContent; a.click();
+                            dlBtn.textContent = "Скачать UHD";
                         };
                     };
                     document.getElementById('gallery').append(card);
                 });
-            }).catch(() => { 
-                document.getElementById('gallery').innerHTML = "<p style='text-align:center'>Архив временно недоступен</p>"; 
             });
-        
+
         document.getElementById('close-btn').onclick = close;
         lb.onclick = (e) => { if(e.target === lb) close(); };
         document.onkeydown = (e) => { if(e.key === "Escape") close(); };
