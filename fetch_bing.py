@@ -37,21 +37,30 @@ def fetch_wallpapers():
                     clean_id = raw_id.split('_')[0]
                     key = clean_id
                     
+                    full_uhd = "https://www.bing.com" + urlbase + "_UHD.jpg"
+                    preview_fhd = "https://www.bing.com" + urlbase + "_1920x1080.jpg"
+                    copyright_text = img.get('copyright', 'Bing Wallpaper')
+                    
                     if key not in db:
-                        # Ссылка на тяжелый 4K UHD оригинал для скачивания/лайтбокса
-                        full_uhd = "https://www.bing.com" + urlbase + "_UHD.jpg"
-                        # Ссылка на легкую Full HD версию для быстрой загрузки сетки сайта
-                        preview_fhd = "https://www.bing.com" + urlbase + "_1920x1080.jpg"
-                        
                         db[key] = {
                             "sort_key": f"{date}_{clean_id}",
                             "date": f"{date[:4]}-{date[4:6]}-{date[6:]}",
                             "url": full_uhd,
                             "preview": preview_fhd,
-                            "img_id": clean_id
+                            "img_id": clean_id,
+                            "copyright": copyright_text
                         }
                         updated = True
                     else:
+                        # Накат обновлений на старую базу (Правки GPT)
+                        if "preview" not in db[key]:
+                            db[key]["preview"] = preview_fhd
+                            updated = True
+                        if "copyright" not in db[key]:
+                            db[key]["copyright"] = copyright_text
+                            updated = True
+                            
+                        # Проверка на более свежую дату перемещения
                         current_sort = db[key].get("sort_key", "")
                         new_sort = f"{date}_{clean_id}"
                         if new_sort > current_sort:
@@ -65,7 +74,7 @@ def fetch_wallpapers():
         db = dict(sorted(db.items(), key=lambda item: item[1].get("sort_key", ""), reverse=True))
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(db, f, ensure_ascii=False, indent=4)
-        print("База успешно обновлена: добавлены превью-ссылки!")
+        print("База успешно синхронизирована и дополнена новыми метаданными!")
 
 if __name__ == "__main__":
     fetch_wallpapers()
