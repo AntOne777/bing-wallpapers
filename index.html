@@ -28,13 +28,13 @@
         const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lightbox-img');
         fetch('data.json?t=' + Date.now()).then(r => r.json()).then(data => {
             Object.values(data).forEach(item => {
-                const card = document.createElement('div'), img = document.createElement('img');
-                card.className = 'card';
+                const card = document.createElement('div'), img = document.createElement('img'), info = document.createElement('div');
+                card.className = 'card'; info.className = 'card-info';
+                
                 img.src = item.preview; img.alt = item.title; img.loading = "lazy";
                 img.onload = () => img.classList.add('loaded');
                 if(img.complete) img.classList.add('loaded');
                 
-                const info = document.createElement('div'); info.className = 'card-info';
                 const tit = document.createElement('div'); tit.style.fontWeight = 'bold'; tit.textContent = item.title;
                 const dat = document.createElement('div'); dat.style.fontSize = '11px'; dat.style.color = '#aaa'; dat.textContent = item.date;
                 info.append(tit, dat); card.append(img, info);
