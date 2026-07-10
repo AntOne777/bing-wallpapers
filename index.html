@@ -1,46 +1,102 @@
-fetch('data.json?t=' + Date.now())
-    .then(r => r.json())
-    .then(data => {
-        Object.values(data).forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            
-            // Защита от undefined: если данных нет, ставим значения по умолчанию
-            const title = item.title || "Без названия";
-            const date = item.date || "";
-            const markets = (item.markets || []).join(' • ');
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#121212">
+    <title>Горизонт | Архивы Bing</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; }
+        h1 { text-align: center; margin: 60px 0; font-family: 'Segoe UI', sans-serif; font-weight: 200; letter-spacing: 0.5em; text-transform: uppercase; color: #ffffff; font-size: 32px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        
+        .card { position: relative; background: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: pointer; }
+        .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: opacity 0.3s; display: block; }
+        .card img.loaded { opacity: 1; }
+        /* Прозрачный слой для перехвата клика */
+        .card-overlay { position: absolute; top:0; left:0; width:100%; height:100%; z-index:10; }
+        
+        .card-info { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 40px 15px 15px; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
+        .card:hover .card-info { opacity: 1; }
+        .card-title { font-size: 13px; font-weight: 300; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+        .card-date, .card-markets { font-size: 10px; color: #aaa; text-transform: uppercase; }
 
-            card.innerHTML = `<img src="${item.preview}" loading="lazy" decoding="async">
-                             <div class="card-overlay"></div>
-                             <div class="card-info">
-                                 <div class="card-title">${title}</div>
-                                 <div class="card-date">${date} ${markets}</div>
-                             </div>`;
-            
-            const img = card.querySelector('img');
-            img.onload = () => img.classList.add('loaded');
-            if(img.complete) img.classList.add('loaded');
-            
-            card.querySelector('.card-overlay').onclick = (e) => {
-                e.preventDefault();
-                lbImg.src = item.url;
-                // ИМЯ ФАЙЛА БЕЗ ДАТЫ
-                lbl.textContent = `${item.img_id}.jpg`; 
-                lb.classList.add('active');
-                
-                dlBtn.onclick = async () => {
-                    dlBtn.textContent = "Загрузка...";
-                    const r = await fetch(item.url);
-                    const b = await r.blob();
-                    if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                    currentBlobUrl = URL.createObjectURL(b);
-                    const a = document.createElement('a');
-                    a.href = currentBlobUrl; 
-                    a.download = lbl.textContent; // Здесь будет только ID.jpg
-                    a.click();
-                    dlBtn.textContent = "Скачать UHD";
-                };
-            };
-            document.getElementById('gallery').append(card);
-        });
-    });
+        .lightbox { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; }
+        .lightbox.active { display: flex; flex-direction: column; }
+        .lightbox-img { max-width: 95%; max-height: 80%; opacity: 0; transition: opacity 0.3s; }
+        .lightbox-img.loaded { opacity: 1; }
+        
+        .close-btn { position: absolute; top: 25px; right: 35px; background: none; border: none; color: white; font-size: 40px; cursor: pointer; z-index: 1001; }
+        .lightbox-controls { margin-top: 20px; display: flex; gap: 20px; align-items: center; }
+        .btn-download { cursor: pointer; background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 12px; text-transform: uppercase; transition: 0.3s; }
+        .btn-download:hover { background: rgba(0, 120, 212, 0.8); }
+    </style>
+</head>
+<body>
+    <h1>Горизонт</h1>
+    <div class="grid" id="gallery"></div>
+    
+    <div id="lightbox" class="lightbox">
+        <button class="close-btn" id="close-btn" title="Закрыть">×</button>
+        <img class="lightbox-img" id="lightbox-img">
+        <div class="lightbox-controls">
+            <div id="file-label" style="font-size: 10px; opacity: 0.5; font-family: monospace;"></div>
+            <button class="btn-download" id="download-btn">Скачать UHD</button>
+        </div>
+    </div>
+
+    <script>
+        const lb = document.getElementById('lightbox'), lbImg = document.getElementById('lightbox-img'),
+              dlBtn = document.getElementById('download-btn'), lbl = document.getElementById('file-label');
+        let currentBlobUrl = null;
+
+        const close = () => { lb.classList.remove('active'); lbImg.src=""; lbImg.classList.remove('loaded'); if(currentBlobUrl){ URL.revokeObjectURL(currentBlobUrl); currentBlobUrl=null; } };
+
+        fetch('data.json?t=' + Date.now())
+            .then(r => r.json())
+            .then(data => {
+                Object.values(data).forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    const title = item.title || "Без названия";
+                    const date = item.date || "";
+                    const markets = (item.markets || []).join(' • ');
+
+                    card.innerHTML = `<img src="${item.preview}" loading="lazy" decoding="async">
+                                     <div class="card-overlay"></div>
+                                     <div class="card-info">
+                                         <div class="card-title">${title}</div>
+                                         <div class="card-date">${date} ${markets}</div>
+                                     </div>`;
+                    
+                    const img = card.querySelector('img');
+                    img.onload = () => img.classList.add('loaded');
+                    if(img.complete) img.classList.add('loaded');
+                    
+                    card.querySelector('.card-overlay').onclick = (e) => {
+                        e.preventDefault();
+                        lbImg.src = item.url;
+                        lbl.textContent = `${item.img_id}.jpg`;
+                        lb.classList.add('active');
+                        
+                        dlBtn.onclick = async () => {
+                            dlBtn.textContent = "Загрузка...";
+                            const r = await fetch(item.url);
+                            const b = await r.blob();
+                            if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                            currentBlobUrl = URL.createObjectURL(b);
+                            const a = document.createElement('a');
+                            a.href = currentBlobUrl; a.download = lbl.textContent; a.click();
+                            dlBtn.textContent = "Скачать UHD";
+                        };
+                    };
+                    document.getElementById('gallery').append(card);
+                });
+            });
+
+        document.getElementById('close-btn').onclick = close;
+        lb.onclick = (e) => { if(e.target === lb) close(); };
+        document.onkeydown = (e) => { if(e.key === "Escape") close(); };
+    </script>
+</body>
+</html>
