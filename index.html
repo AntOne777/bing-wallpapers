@@ -7,8 +7,8 @@
     <style>
         body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; padding: 20px; }
         h1 { text-align: center; margin-bottom: 30px; color: #f5f5f5; }
-        .filters { text-align: center; margin-bottom: 30px; }
-        button { background: #222; color: #ccc; border: 1px solid #444; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 6px; font-size: 14px; transition: all 0.3s ease; }
+        .filters { text-align: center; margin-bottom: 30px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+        button { background: #222; color: #ccc; border: 1px solid #444; padding: 10px 16px; margin: 5px; cursor: pointer; border-radius: 6px; font-size: 13px; transition: all 0.3s ease; }
         button:hover, button.active { background: #0078d4; color: white; border-color: #0078d4; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; padding: 0 10px; }
         .card { background: #1e1e1e; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 12px rgba(0,0,0,0.5); transition: transform 0.2s; display: flex; flex-direction: column; }
@@ -34,12 +34,17 @@
     
     <div class="filters">
         <button onclick="filterMarket('ALL')" id="btn-ALL" class="active">Все страны</button>
-        <button onclick="filterMarket('en-US')" id="btn-en-US">США</button>
-        <button onclick="filterMarket('zh-CN')" id="btn-zh-CN">Китай</button>
-        <button onclick="filterMarket('ja-JP')" id="btn-ja-JP">Япония</button>
-        <button onclick="filterMarket('de-DE')" id="btn-de-DE">Германия</button>
-        <button onclick="filterMarket('fr-FR')" id="btn-fr-FR">Франция</button>
-        <button onclick="filterMarket('ru-RU')" id="btn-ru-RU">Россия</button>
+        <button onclick="filterMarket('en-AU')" id="btn-en-AU">Australia</button>
+        <button onclick="filterMarket('en-CA')" id="btn-en-CA">Canada</button>
+        <button onclick="filterMarket('zh-CN')" id="btn-zh-CN">中国</button>
+        <button onclick="filterMarket('de-DE')" id="btn-de-DE">Deutschland</button>
+        <button onclick="filterMarket('es-ES')" id="btn-es-ES">España</button>
+        <button onclick="filterMarket('fr-FR')" id="btn-fr-FR">France</button>
+        <button onclick="filterMarket('it-IT')" id="btn-it-IT">Italia</button>
+        <button onclick="filterMarket('ja-JP')" id="btn-ja-JP">日本</button>
+        <button onclick="filterMarket('en-NZ')" id="btn-en-NZ">New Zealand</button>
+        <button onclick="filterMarket('en-GB')" id="btn-en-GB">United Kingdom</button>
+        <button onclick="filterMarket('en-US')" id="btn-en-US">United States</button>
     </div>
 
     <div id="no-data">В этом регионе пока нет сохраненных обоев.</div>
