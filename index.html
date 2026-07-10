@@ -12,7 +12,7 @@
         .card { position: relative; background: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: pointer; }
         .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: opacity 0.3s; display: block; }
         .card img.loaded { opacity: 1; }
-        /* Прозрачный слой для перехвата клика */
+        
         .card-overlay { position: absolute; top:0; left:0; width:100%; height:100%; z-index:10; }
         
         .card-info { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 40px 15px 15px; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
@@ -58,14 +58,14 @@
                     const card = document.createElement('div');
                     card.className = 'card';
                     
-                    const title = item.title || "Без названия";
+                    const title = item.title || "";
                     const date = item.date || "";
                     const markets = (item.markets || []).join(' • ');
 
                     card.innerHTML = `<img src="${item.preview}" loading="lazy" decoding="async">
                                      <div class="card-overlay"></div>
                                      <div class="card-info">
-                                         <div class="card-title">${title}</div>
+                                         ${title ? `<div class="card-title">${title}</div>` : ''}
                                          <div class="card-date">${date} ${markets}</div>
                                      </div>`;
                     
