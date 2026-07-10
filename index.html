@@ -92,13 +92,8 @@
 
         function openViewer(item) {
             current = item;
-            bigImage.style.opacity = 0;
-            const img = new Image();
-            img.onload = () => {
-                bigImage.src = item.url;
-                bigImage.style.opacity = 1;
-            };
-            img.src = item.url;
+            bigImage.src = item.url;
+            bigImage.style.opacity = 1;
             viewer.classList.add("active");
         }
 
