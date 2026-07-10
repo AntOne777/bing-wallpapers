@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Личный архив Bing Wallpaper в UHD">
     <meta name="theme-color" content="#121212">
     <title>Горизонт | Архивы Bing</title>
     <style>
@@ -64,15 +65,22 @@
                     
                     const overlay = document.createElement('div'); overlay.className = 'card-overlay';
                     const info = document.createElement('div'); info.className = 'card-info';
-                    if(item.title) info.innerHTML = `<div class="card-title">${item.title}</div>`;
-                    info.innerHTML += `<div class="card-date">${item.date || ""} ${(item.markets || []).join(' • ')}</div>`;
+                    
+                    if(item.title) {
+                        const t = document.createElement('div'); t.className = 'card-title'; t.textContent = item.title;
+                        info.append(t);
+                    }
+                    const d = document.createElement('div'); d.className = 'card-date'; 
+                    d.textContent = `${item.date || ""} ${(item.markets || []).join(' • ')}`;
+                    info.append(d);
                     
                     card.append(img, overlay, info);
                     
                     overlay.onclick = (e) => {
                         e.preventDefault();
                         lbImg.classList.remove('loaded');
-                        lbl.textContent = `${item.img_id}.jpg`;
+                        const safeTitle = (item.title || "BingImage").replace(/\s+/g, '').replace(/[\\/:*?"<>|]/g, '');
+                        lbl.textContent = `${safeTitle}.jpg`;
                         
                         const preload = new Image();
                         preload.onload = () => {
@@ -85,13 +93,15 @@
                         
                         dlBtn.onclick = async () => {
                             dlBtn.textContent = "Загрузка...";
-                            const r = await fetch(item.url);
-                            const b = await r.blob();
-                            if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                            currentBlobUrl = URL.createObjectURL(b);
-                            const a = document.createElement('a');
-                            a.href = currentBlobUrl; a.download = lbl.textContent; a.click();
-                            dlBtn.textContent = "Скачать UHD";
+                            try {
+                                const r = await fetch(item.url);
+                                const b = await r.blob();
+                                if(currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                                currentBlobUrl = URL.createObjectURL(b);
+                                const a = document.createElement('a');
+                                a.href = currentBlobUrl; a.download = lbl.textContent; a.click();
+                            } catch(e) { alert("Ошибка при загрузке"); }
+                            finally { dlBtn.textContent = "Скачать UHD"; }
                         };
                     };
                     document.getElementById('gallery').append(card);
