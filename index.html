@@ -12,21 +12,45 @@
         
         body { 
             margin: 0; 
-    padding: 20px; 
-    /* Максимально темный и нейтральный фон */
-    background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
-    min-height: 100vh;
-    color: white; 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            padding: 20px; 
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+            min-height: 100vh;
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
         }
 
         h1 { text-align: center; margin: 60px 0; font-weight: 200; letter-spacing: .5em; text-transform: uppercase; font-size: 32px; }
+        
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .card { position: relative; overflow: hidden; border-radius: 8px; background: #1e1e1e; cursor: pointer; }
+        
+        .card { 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 8px; 
+            background: #1e1e1e; 
+            cursor: pointer; 
+            transition: transform 0.3s ease; /* Плавность масштабирования */
+        }
+
+        .card:hover {
+            transform: scale(1.03); /* Эффект увеличения */
+            z-index: 2;
+        }
+
         .card img { width: 100%; height: 220px; object-fit: cover; opacity: 0; transition: .3s; display: block; }
         .card img.loaded { opacity: 1; }
+        
         .overlay { position: absolute; inset: 0; z-index: 10; }
-        .info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 15px 15px; background: linear-gradient(transparent, rgba(0,0,0,.9)); opacity: 0; transition: .3s; pointer-events: none; }
+        
+        .info { 
+            position: absolute; bottom: 0; left: 0; width: 100%; 
+            padding: 40px 15px 15px; 
+            background: linear-gradient(transparent, rgba(0,0,0,.9)); 
+            opacity: 0; 
+            transition: .3s; 
+            pointer-events: none; 
+        }
+        
         .card:hover .info { opacity: 1; }
         .title { font-size: 13px; text-transform: uppercase; }
         .date { font-size: 10px; color: #aaa; margin-top: 5px; }
@@ -67,9 +91,7 @@
         let current = null;
         let blobURL = null;
 
-        document.addEventListener("contextmenu", e => {
-            if (e.target === bigImage) e.preventDefault();
-        });
+        document.addEventListener("contextmenu", e => { if (e.target === bigImage) e.preventDefault(); });
 
         async function download(item) {
             if (!item || !item.url) return;
@@ -78,26 +100,15 @@
                 const response = await fetch(item.url);
                 if (!response.ok) throw new Error();
                 const blob = await response.blob();
-                
                 if (blobURL) URL.revokeObjectURL(blobURL);
                 blobURL = URL.createObjectURL(blob);
-
                 const a = document.createElement("a");
                 a.href = blobURL;
                 a.download = `${item.img_id || "BING_IMAGE"}.jpg`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            } catch {
-                alert("Ошибка загрузки");
-            } finally {
+                document.body.appendChild(a); a.click(); a.remove();
+            } catch { alert("Ошибка загрузки"); } finally {
                 downloadBtn.textContent = "Скачать UHD";
-                setTimeout(() => {
-                    if (blobURL) {
-                        URL.revokeObjectURL(blobURL);
-                        blobURL = null;
-                    }
-                }, 2000);
+                setTimeout(() => { if (blobURL) { URL.revokeObjectURL(blobURL); blobURL = null; } }, 2000);
             }
         }
 
@@ -117,16 +128,12 @@
         fetch("data.json?" + Date.now())
             .then(r => { if (!r.ok) throw new Error(); return r.json(); })
             .then(data => {
-                const sortedItems = Object.values(data).sort((a, b) => 
-                    b.sort_key.localeCompare(a.sort_key)
-                );
-
+                const sortedItems = Object.values(data).sort((a, b) => b.sort_key.localeCompare(a.sort_key));
                 sortedItems.forEach(item => {
                     const card = document.createElement("div"); card.className = "card";
                     const img = document.createElement("img"); 
                     img.src = item.preview; img.loading = "lazy";
                     img.onload = () => img.classList.add("loaded");
-
                     const overlay = document.createElement("div"); overlay.className = "overlay";
                     const info = document.createElement("div"); info.className = "info";
                     const title = document.createElement("div"); title.className = "title";
@@ -139,14 +146,8 @@
                     gallery.append(card);
                 });
             })
-            .catch(() => {
-                gallery.innerHTML = "<p style='text-align:center'>Ошибка загрузки архива</p>";
-            });
+            .catch(() => { gallery.innerHTML = "<p style='text-align:center'>Ошибка загрузки архива</p>"; });
 
         downloadBtn.onclick = () => download(current);
         document.getElementById("close").onclick = closeViewer;
-        viewer.onclick = e => { if (e.target === viewer) closeViewer(); };
-        document.onkeydown = e => { if (e.key === "Escape") closeViewer(); };
-    </script>
-</body>
-</html>
+        viewer.onclick = e => { if (
