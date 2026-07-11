@@ -106,7 +106,12 @@
         fetch("data.json?" + Date.now())
             .then(r => { if (!r.ok) throw new Error(); return r.json(); })
             .then(data => {
-                Object.values(data).forEach(item => {
+                // Сортировка: новые записи с самым поздним sort_key первыми
+                const sortedItems = Object.values(data).sort((a, b) => 
+                    b.sort_key.localeCompare(a.sort_key)
+                );
+
+                sortedItems.forEach(item => {
                     const card = document.createElement("div"); card.className = "card";
                     const img = document.createElement("img"); 
                     img.src = item.preview; img.loading = "lazy";
