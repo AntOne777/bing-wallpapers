@@ -24,6 +24,7 @@ def fetch_wallpapers():
                     raw_id = urlbase.split('?id=OHR.')[-1] if '?id=OHR.' in urlbase else urlbase.split('/')[-1]
                     clean_id = raw_id.split('_')[0]
                     date = img.get('startdate')
+                    copyright_text = img.get('copyright', '')
 
                     if clean_id not in db:
                         db[clean_id] = {
@@ -33,10 +34,15 @@ def fetch_wallpapers():
                             "preview": f"https://www.bing.com{urlbase}_1920x1080.jpg",
                             "img_id": clean_id,
                             "title": img.get('title', clean_id),
-                            "copyright": img.get('copyright', ''),
+                            "description": copyright_text, # Авто-добавление описания
+                            "copyright": copyright_text,
                             "markets": [mkt]
                         }
                     else:
+                        # Обновляем, если описание было пустым
+                        if not db[clean_id].get("description"):
+                            db[clean_id]["description"] = copyright_text
+                        
                         if mkt not in db[clean_id]["markets"]:
                             db[clean_id]["markets"].append(mkt)
         except Exception as e:
