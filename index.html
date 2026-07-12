@@ -57,14 +57,16 @@
             background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25);
             border-radius: 50%; cursor: pointer; display: flex; 
             justify-content: center; align-items: center; backdrop-filter: blur(12px); 
-            transition: all 0.3s ease; padding: 0;
+            transition: all 0.3s ease; padding: 0; margin: 0;
         }
 
         .close:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); }
 
         .close svg {
-            width: 24px; height: 24px; stroke: white; stroke-width: 1.5;
-            fill: none; stroke-linecap: round; stroke-linejoin: round;
+            width: 20px; height: 20px; stroke: white;
+            stroke-width: 2; fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+            display: block;
         }
 
         .controls { margin-top: 20px; }
@@ -93,7 +95,9 @@
 
     <div class="lightbox" id="viewer">
         <button class="close" id="close">
-            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+            <svg viewBox="0 0 24 24" shape-rendering="crispEdges">
+                <path d="M 7 7 L 17 17 M 17 7 L 7 17" />
+            </svg>
         </button>
         <img id="bigImage">
         <div class="controls">
