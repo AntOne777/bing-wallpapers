@@ -29,11 +29,11 @@
             border-radius: 8px; 
             background: #1e1e1e; 
             cursor: pointer; 
-            transition: transform 0.3s ease; /* Плавность масштабирования */
+            transition: transform 0.3s ease;
         }
 
         .card:hover {
-            transform: scale(1.03); /* Эффект увеличения */
+            transform: scale(1.03);
             z-index: 2;
         }
 
@@ -52,7 +52,7 @@
         }
         
         .card:hover .info { opacity: 1; }
-        .title { font-size: 13px; text-transform: uppercase; }
+        .title { font-size: 13px; text-transform: uppercase; font-weight: bold; }
         .date { font-size: 10px; color: #aaa; margin-top: 5px; }
 
         .lightbox { position: fixed; inset: 0; display: none; background: rgba(0,0,0,.95); justify-content: center; align-items: center; flex-direction: column; z-index: 1000; }
@@ -134,13 +134,29 @@
                     const img = document.createElement("img"); 
                     img.src = item.preview; img.loading = "lazy";
                     img.onload = () => img.classList.add("loaded");
+                    
                     const overlay = document.createElement("div"); overlay.className = "overlay";
                     const info = document.createElement("div"); info.className = "info";
+                    
                     const title = document.createElement("div"); title.className = "title";
                     title.textContent = item.img_id || "";
+                    info.append(title);
+
+                    // Добавление описания
+                    if (item.description) {
+                        const desc = document.createElement("div"); 
+                        desc.style.fontSize = "11px"; 
+                        desc.style.marginTop = "6px";
+                        desc.style.color = "#bbb";
+                        desc.style.lineHeight = "1.4";
+                        desc.textContent = item.description.length > 80 ? item.description.substring(0, 77) + "..." : item.description;
+                        info.append(desc);
+                    }
+
                     const date = document.createElement("div"); date.className = "date";
                     date.textContent = item.date || "";
-                    info.append(title, date);
+                    info.append(date);
+                    
                     card.append(img, overlay, info);
                     overlay.onclick = () => openViewer(item);
                     gallery.append(card);
