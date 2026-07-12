@@ -10,7 +10,23 @@
         "copyright": "羚羊峡谷，纳瓦霍族保留地，亚利桑那州，美国 (© Mark Skalny/Getty Images)",
         "markets": [
             "zh-CN",
-            "ja-JP"
+            "ja-JP",
+            "es-ES",
+            "fr-FR",
+            "it-IT"
+        ]
+    },
+    "MunichTwilight": {
+        "sort_key": "20260712_MunichTwilight",
+        "date": "2026-07-12",
+        "url": "https://www.bing.com/th?id=OHR.MunichTwilight_DE-DE5540064188_UHD.jpg",
+        "preview": "https://www.bing.com/th?id=OHR.MunichTwilight_DE-DE5540064188_1920x1080.jpg",
+        "img_id": "MunichTwilight",
+        "title": "Im Festspielglanz",
+        "description": "München mit der Frauenkirche vor den Alpen, Bayern (© MarcelStrelow/Getty Images)",
+        "copyright": "München mit der Frauenkirche vor den Alpen, Bayern (© MarcelStrelow/Getty Images)",
+        "markets": [
+            "de-DE"
         ]
     },
     "KatahdinWWNM": {
