@@ -1,345 +1,499 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Личный архив Bing Wallpaper UHD">
-    <meta name="theme-color" content="#121212">
-    <title>Горизонт | Bing Archive</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * { box-sizing: border-box; }
-        
-        body { 
-            margin: 0; 
-            padding: 20px; 
-            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
-            min-height: 100vh;
-            color: white; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
-        }
+<meta name="description" content="Личный архив Bing Wallpaper UHD">
+<meta name="theme-color" content="#121212">
 
-        h1 { 
-            text-align: center; 
-            margin: 60px 0; 
-            font-weight: 200; 
-            letter-spacing: .5em; 
-            text-transform: uppercase; 
-            font-size: 32px; 
-        }
-        
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-            gap: 20px; 
-        }
-        
-        .card { 
-            position: relative; 
-            overflow: hidden; 
-            border-radius: 8px; 
-            background: #1e1e1e; 
-            cursor: pointer; 
-            transition: transform 0.3s ease;
-        }
+<title>Горизонт | Bing Archive</title>
 
-        .card:hover {
-            transform: scale(1.03);
-            z-index: 2;
-        }
 
-        .card img { 
-            width: 100%; 
-            height: 220px; 
-            object-fit: cover; 
-            opacity: 0; 
-            transition: .3s; 
-            display: block; 
-        }
+<style>
 
-        .card img.loaded { 
-            opacity: 1; 
-        }
-        
-        .overlay { 
-            position: absolute; 
-            inset: 0; 
-            z-index: 10; 
-        }
+* { 
+    box-sizing: border-box; 
+}
 
-        .lightbox { 
-            position: fixed; 
-            inset: 0; 
-            display: none; 
-            background: rgba(0,0,0,.95); 
-            justify-content: center; 
-            align-items: center; 
-            flex-direction: column; 
-            z-index: 1000; 
-        }
 
-        .lightbox.active { 
-            display: flex; 
-        }
+body { 
+    margin: 0;
+    padding: 20px;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-        .lightbox img { 
-            max-width: 95%; 
-            max-height: 80%; 
-            object-fit: contain; 
-            user-select: none; 
-            -webkit-user-drag: none; 
-            -webkit-touch-callout: none; 
-            pointer-events: auto; 
-            transition: opacity 0.3s ease;
-        }
 
-        .close { 
-            position: absolute; 
-            right: 35px; 
-            top: 25px; 
-            font-size: 40px; 
-            background: none; 
-            border: 0; 
-            color: white; 
-            cursor: pointer; 
-        }
+h1 { 
+    text-align: center;
+    margin: 60px 0;
+    font-weight: 200;
+    letter-spacing: .5em;
+    text-transform: uppercase;
+    font-size: 32px;
+}
 
-        .controls { 
-            margin-top: 20px; 
-        }
 
-        button { 
-            background: #222; 
-            color: white; 
-            border: 0; 
-            padding: 10px 20px; 
-            cursor: pointer; 
-            transition: .3s; 
-        }
+.grid { 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
 
-        button:hover { 
-            background: #0078d4; 
-        }
-    </style>
 
-    <link rel="icon" type="image/png" href="favicon.png">
+.card { 
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #1e1e1e;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+
+.card:hover {
+    transform: scale(1.03);
+    z-index: 2;
+}
+
+
+.card img { 
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    opacity: 0;
+    transition: .3s;
+    display: block;
+}
+
+
+.card img.loaded {
+    opacity: 1;
+}
+
+
+.overlay { 
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+}
+
+
+.lightbox { 
+    position: fixed;
+    inset: 0;
+    display: none;
+    background: rgba(0,0,0,.95);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+
+.lightbox.active {
+    display: flex;
+}
+
+
+.lightbox img { 
+    max-width: 95%;
+    max-height: 80%;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+
+.close { 
+    position: absolute;
+    right: 35px;
+    top: 25px;
+    font-size: 40px;
+    background: none;
+    border: 0;
+    color: white;
+    cursor: pointer;
+}
+
+
+.controls { 
+    margin-top: 20px;
+}
+
+
+/* НОВАЯ КРАСИВАЯ КНОПКА */
+
+button { 
+    background: rgba(255,255,255,0.08);
+    color: white;
+
+    border: 1px solid rgba(255,255,255,0.25);
+
+    padding: 14px 34px;
+
+    border-radius: 50px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+
+    transition: all 0.35s ease;
+
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+
+button:hover { 
+
+    background: rgba(0,120,212,0.85);
+
+    border-color: rgba(255,255,255,0.5);
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 12px 40px rgba(0,120,212,0.35);
+
+}
+
+
+button:active {
+
+    transform: scale(0.96);
+
+}
+
+
+button.loading {
+
+    opacity: 0.7;
+
+    pointer-events: none;
+
+}
+
+
+</style>
+
+
+<link rel="icon" type="image/png" href="favicon.png">
+
 </head>
+
 
 <body>
 
-    <h1>Горизонт</h1>
 
-    <div class="grid" id="gallery"></div>
+<h1>Горизонт</h1>
 
 
-    <div class="lightbox" id="viewer">
+<div class="grid" id="gallery"></div>
 
-        <button class="close" id="close">×</button>
 
-        <img id="bigImage">
 
-        <div class="controls">
-            <button id="download">Скачать UHD</button>
-        </div>
+<div class="lightbox" id="viewer">
 
-    </div>
+<button class="close" id="close">×</button>
 
+<img id="bigImage">
 
-    <script>
 
-        const gallery = document.getElementById("gallery");
-        const viewer = document.getElementById("viewer");
-        const bigImage = document.getElementById("bigImage");
-        const downloadBtn = document.getElementById("download");
+<div class="controls">
 
+<button id="download">⬇ Скачать UHD</button>
 
-        let current = null;
-        let blobURL = null;
+</div>
 
 
-        document.addEventListener("contextmenu", e => { 
-            if (e.target === bigImage) e.preventDefault(); 
-        });
+</div>
 
 
-        async function download(item) {
 
-            if (!item || !item.url) return;
+<script>
 
-            try {
 
-                downloadBtn.textContent = "Загрузка...";
+const gallery = document.getElementById("gallery");
 
-                const response = await fetch(item.url);
+const viewer = document.getElementById("viewer");
 
-                if (!response.ok) throw new Error();
+const bigImage = document.getElementById("bigImage");
 
+const downloadBtn = document.getElementById("download");
 
-                const blob = await response.blob();
 
 
-                if (blobURL) {
-                    URL.revokeObjectURL(blobURL);
-                }
+let current = null;
 
+let blobURL = null;
 
-                blobURL = URL.createObjectURL(blob);
 
 
-                const a = document.createElement("a");
+document.addEventListener("contextmenu", e => {
 
-                a.href = blobURL;
+    if (e.target === bigImage) e.preventDefault();
 
-                a.download = `${item.img_id || "BING_IMAGE"}.jpg`;
+});
 
-                document.body.appendChild(a);
 
-                a.click();
 
-                a.remove();
 
+async function download(item) {
 
-            } catch {
 
-                alert("Ошибка загрузки");
+if (!item || !item.url) return;
 
 
-            } finally {
 
-                downloadBtn.textContent = "Скачать UHD";
+try {
 
 
-                setTimeout(() => { 
+downloadBtn.textContent = "⏳ Загрузка...";
 
-                    if (blobURL) { 
+downloadBtn.classList.add("loading");
 
-                        URL.revokeObjectURL(blobURL); 
 
-                        blobURL = null; 
 
-                    } 
+const response = await fetch(item.url);
 
-                }, 2000);
 
-            }
 
-        }
+if (!response.ok) throw new Error();
 
 
 
-        function openViewer(item) {
+const blob = await response.blob();
 
-            current = item;
 
-            bigImage.src = item.url;
 
-            bigImage.style.opacity = 1;
+if (blobURL) {
 
-            viewer.classList.add("active");
+    URL.revokeObjectURL(blobURL);
 
-        }
+}
 
 
 
-        function closeViewer() {
+blobURL = URL.createObjectURL(blob);
 
-            viewer.classList.remove("active");
 
-            bigImage.src = "";
 
-            current = null;
+const a = document.createElement("a");
 
-        }
+a.href = blobURL;
 
+a.download = `${item.img_id || "BING_IMAGE"}.jpg`;
 
+document.body.appendChild(a);
 
-        fetch("data.json?" + Date.now())
+a.click();
 
-            .then(r => { 
+a.remove();
 
-                if (!r.ok) throw new Error(); 
 
-                return r.json(); 
 
-            })
+}
 
-            .then(data => {
+catch {
 
 
-                const sortedItems = Object.values(data)
-                    .sort((a, b) => b.sort_key.localeCompare(a.sort_key));
+alert("Ошибка загрузки");
 
 
-                sortedItems.forEach(item => {
+}
 
+finally {
 
-                    const card = document.createElement("div");
 
-                    card.className = "card";
+downloadBtn.textContent = "⬇ Скачать UHD";
 
+downloadBtn.classList.remove("loading");
 
-                    const img = document.createElement("img");
 
-                    img.src = item.preview;
 
-                    img.loading = "lazy";
+setTimeout(() => {
 
 
-                    img.onload = () => img.classList.add("loaded");
+if (blobURL) {
 
 
+URL.revokeObjectURL(blobURL);
 
-                    const overlay = document.createElement("div");
+blobURL = null;
 
-                    overlay.className = "overlay";
 
+}
 
 
-                    card.append(img, overlay);
+},2000);
 
 
+}
 
-                    overlay.onclick = () => openViewer(item);
 
+}
 
 
-                    gallery.append(card);
 
 
-                });
+function openViewer(item) {
 
 
-            })
+current = item;
 
-            .catch(() => { 
 
-                gallery.innerHTML = "<p style='text-align:center'>Ошибка загрузки архива</p>"; 
+bigImage.src = item.url;
 
-            });
 
+bigImage.style.opacity = 1;
 
 
-        downloadBtn.onclick = () => download(current);
+viewer.classList.add("active");
 
 
-        document.getElementById("close").onclick = closeViewer;
+}
 
 
-        viewer.onclick = e => { 
 
-            if (e.target === viewer) closeViewer(); 
 
-        };
+function closeViewer() {
 
 
-        document.onkeydown = e => { 
+viewer.classList.remove("active");
 
-            if (e.key === "Escape") closeViewer(); 
 
-        };
+bigImage.src = "";
 
 
-    </script>
+current = null;
+
+
+}
+
+
+
+
+
+fetch("data.json?" + Date.now())
+
+
+.then(r => {
+
+
+if (!r.ok) throw new Error();
+
+
+return r.json();
+
+
+})
+
+
+.then(data => {
+
+
+
+const sortedItems = Object.values(data)
+
+.sort((a,b)=>b.sort_key.localeCompare(a.sort_key));
+
+
+
+sortedItems.forEach(item=>{
+
+
+const card=document.createElement("div");
+
+card.className="card";
+
+
+
+const img=document.createElement("img");
+
+img.src=item.preview;
+
+img.loading="lazy";
+
+
+img.onload=()=>img.classList.add("loaded");
+
+
+
+const overlay=document.createElement("div");
+
+overlay.className="overlay";
+
+
+
+card.append(img,overlay);
+
+
+
+overlay.onclick=()=>openViewer(item);
+
+
+
+gallery.append(card);
+
+
+
+});
+
+
+})
+
+
+.catch(()=>{
+
+
+gallery.innerHTML="<p style='text-align:center'>Ошибка загрузки архива</p>";
+
+
+});
+
+
+
+
+downloadBtn.onclick=()=>download(current);
+
+
+
+document.getElementById("close").onclick=closeViewer;
+
+
+
+viewer.onclick=e=>{
+
+if(e.target===viewer) closeViewer();
+
+};
+
+
+
+document.onkeydown=e=>{
+
+if(e.key==="Escape") closeViewer();
+
+};
+
+
+</script>
+
 
 </body>
 </html>
