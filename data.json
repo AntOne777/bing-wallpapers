@@ -10,7 +10,10 @@
         "copyright": "マリー・レイク, 米国 カリフォルニア州 (© Steve Dunleavy/Getty Images)",
         "markets": [
             "ja-JP",
-            "zh-CN"
+            "zh-CN",
+            "de-DE",
+            "es-ES",
+            "it-IT"
         ]
     },
     "BastilleSacreCoeur": {
@@ -213,7 +216,8 @@
             "en-GB",
             "en-CA",
             "pt-BR",
-            "en-US"
+            "en-US",
+            "fr-FR"
         ]
     },
     "IsolaBella": {
