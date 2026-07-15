@@ -1,4 +1,17 @@
 {
+    "Tanager": {
+        "sort_key": "20260715_Tanager",
+        "date": "2026-07-15",
+        "url": "https://www.bing.com/th?id=OHR.Tanager_PT-BR3453059902_UHD.jpg",
+        "preview": "https://www.bing.com/th?id=OHR.Tanager_PT-BR3453059902_1920x1080.jpg",
+        "img_id": "Tanager",
+        "title": "Sete cores, zero discrição",
+        "description": "Saíra-sete-cores pousada em um galho em São Paulo (© Juan Carlos Vindas/Getty Images)",
+        "copyright": "Saíra-sete-cores pousada em um galho em São Paulo (© Juan Carlos Vindas/Getty Images)",
+        "markets": [
+            "pt-BR"
+        ]
+    },
     "MarieLake": {
         "sort_key": "20260714_MarieLake",
         "date": "2026-07-14",
@@ -14,7 +27,8 @@
             "de-DE",
             "es-ES",
             "it-IT",
-            "en-GB"
+            "en-GB",
+            "en-CA"
         ]
     },
     "BastilleSacreCoeur": {
