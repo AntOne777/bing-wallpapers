@@ -23,7 +23,23 @@
         "copyright": "ネイビー・ピア, 米国イリノイ州 (© Christopher.F Photography/Getty Images)",
         "markets": [
             "ja-JP",
-            "zh-CN"
+            "zh-CN",
+            "de-DE",
+            "es-ES",
+            "it-IT"
+        ]
+    },
+    "DeerGrass": {
+        "sort_key": "20260715_DeerGrass",
+        "date": "2026-07-15",
+        "url": "https://www.bing.com/th?id=OHR.DeerGrass_FR-FR3634474861_UHD.jpg",
+        "preview": "https://www.bing.com/th?id=OHR.DeerGrass_FR-FR3634474861_1920x1080.jpg",
+        "img_id": "DeerGrass",
+        "title": "Sieste estivale",
+        "description": "Cerf sika dans l’herbe, parc de Merlet, Haute-Savoie (© porojnicu/Getty Images)",
+        "copyright": "Cerf sika dans l’herbe, parc de Merlet, Haute-Savoie (© porojnicu/Getty Images)",
+        "markets": [
+            "fr-FR"
         ]
     },
     "MarieLake": {
