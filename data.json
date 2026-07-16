@@ -9,7 +9,23 @@
         "description": "瓦伊海滩上的日光浴躺椅，克里特岛，希腊 (© borchee/Getty Images)",
         "copyright": "瓦伊海滩上的日光浴躺椅，克里特岛，希腊 (© borchee/Getty Images)",
         "markets": [
-            "zh-CN"
+            "zh-CN",
+            "de-DE",
+            "fr-FR",
+            "it-IT"
+        ]
+    },
+    "PerseidasTenerife": {
+        "sort_key": "20260716_PerseidasTenerife",
+        "date": "2026-07-16",
+        "url": "https://www.bing.com/th?id=OHR.PerseidasTenerife_ES-ES7757979261_UHD.jpg",
+        "preview": "https://www.bing.com/th?id=OHR.PerseidasTenerife_ES-ES7757979261_1920x1080.jpg",
+        "img_id": "PerseidasTenerife",
+        "title": "Un universo por descubrir",
+        "description": "Vía Láctea y meteoros de las Perseidas sobre el Teide, Observatorio Astronómico de Izaña, Tenerife, Islas Canarias (© Westend61/Getty Images)",
+        "copyright": "Vía Láctea y meteoros de las Perseidas sobre el Teide, Observatorio Astronómico de Izaña, Tenerife, Islas Canarias (© Westend61/Getty Images)",
+        "markets": [
+            "es-ES"
         ]
     },
     "GionFestival2026": {
