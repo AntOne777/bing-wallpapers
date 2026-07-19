@@ -23,7 +23,11 @@
         "copyright": "月球与地球由阿耳忒弥斯2号机组人员拍摄 (© NASA)",
         "markets": [
             "zh-CN",
-            "ja-JP"
+            "ja-JP",
+            "de-DE",
+            "es-ES",
+            "fr-FR",
+            "it-IT"
         ]
     },
     "HirundoRustica": {
