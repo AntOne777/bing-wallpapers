@@ -12,6 +12,20 @@
             "pt-BR"
         ]
     },
+    "Artemis": {
+        "sort_key": "20260719_Artemis",
+        "date": "2026-07-19",
+        "url": "https://www.bing.com/th?id=OHR.Artemis_ZH-CN3540365575_UHD.jpg",
+        "preview": "https://www.bing.com/th?id=OHR.Artemis_ZH-CN3540365575_1920x1080.jpg",
+        "img_id": "Artemis",
+        "title": "月瞰寰宇",
+        "description": "月球与地球由阿耳忒弥斯2号机组人员拍摄 (© NASA)",
+        "copyright": "月球与地球由阿耳忒弥斯2号机组人员拍摄 (© NASA)",
+        "markets": [
+            "zh-CN",
+            "ja-JP"
+        ]
+    },
     "HirundoRustica": {
         "sort_key": "20260717_HirundoRustica",
         "date": "2026-07-17",
