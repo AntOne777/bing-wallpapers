@@ -1,4 +1,17 @@
 {
+    "SoccerDay": {
+        "sort_key": "20260719_SoccerDay",
+        "date": "2026-07-19",
+        "url": "https://www.bing.com/th?id=OHR.SoccerDay_PT-BR5859476382_UHD.jpg",
+        "preview": "https://www.bing.com/th?id=OHR.SoccerDay_PT-BR5859476382_1920x1080.jpg",
+        "img_id": "SoccerDay",
+        "title": "Em cada canto, um campo",
+        "description": "Vista aérea de jovens jogando futebol em um campo de terra em uma comunidade do Rio de Janeiro, RJ (© Tom Wilde/Getty Images)",
+        "copyright": "Vista aérea de jovens jogando futebol em um campo de terra em uma comunidade do Rio de Janeiro, RJ (© Tom Wilde/Getty Images)",
+        "markets": [
+            "pt-BR"
+        ]
+    },
     "HirundoRustica": {
         "sort_key": "20260717_HirundoRustica",
         "date": "2026-07-17",
@@ -16,7 +29,8 @@
             "es-ES",
             "fr-FR",
             "it-IT",
-            "en-GB"
+            "en-GB",
+            "en-CA"
         ]
     },
     "GrainSilosSK": {
